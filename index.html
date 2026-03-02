@@ -91,6 +91,12 @@ label {
     <h3>NPM DENISE</h3>
    <h3>Cadastro de Propriedade Rural</h3>
 
+
+   <button onclick="mostrarMapa()">Ver Somente Mapa</button>
+<button onclick="mostrarFormulario()">Ver Somente Formulário</button>
+<button onclick="modoNormal()">Modo Dividido</button>
+<hr>
+
 <input type="hidden" id="indiceEdicao">
 
 <label>Nome da Propriedade</label>
@@ -142,6 +148,41 @@ label {
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+
+function mostrarMapa(){
+
+    document.getElementById("painel").style.display = "none";
+    document.getElementById("map").style.width = "100%";
+    document.getElementById("map").style.height = "100vh";
+
+    document.getElementById("btnVoltar").style.display = "block";
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 200);
+}
+
+function mostrarFormulario(){
+    document.getElementById("map").style.display = "none";
+    document.getElementById("painel").style.width = "100%";
+    document.getElementById("painel").style.height = "100vh";
+}
+function modoNormal(){
+
+    document.getElementById("painel").style.display = "block";
+    document.getElementById("map").style.display = "block";
+
+    document.getElementById("painel").style.width = "";
+    document.getElementById("map").style.width = "";
+    document.getElementById("map").style.height = "";
+
+    document.getElementById("btnVoltar").style.display = "none";
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 200);
+}
+
 
 function usarMinhaLocalizacao(){
 
@@ -445,6 +486,19 @@ function limparCampos(){
 carregarTudo();
 
 </script>
-
+<button id="btnVoltar" onclick="modoNormal()" style="
+position: fixed;
+top: 10px;
+right: 10px;
+z-index: 9999;
+display: none;
+padding: 10px 15px;
+background: #1976d2;
+color: white;
+border: none;
+border-radius: 8px;
+">
+Voltar
+</button>
 </body>
 </html>
