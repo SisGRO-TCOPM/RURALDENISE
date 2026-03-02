@@ -7,7 +7,7 @@
 
 
 
-    <title>Cadastro Rural - Denise</title>
+    <title>Rural - Denise</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
 
@@ -88,7 +88,8 @@ label {
 <body>
 
 <div id="painel">
-   <h3>Cadastro</h3>
+    <h3>NPM DENISE</h3>
+   <h3>Cadastro de Propriedade Rural</h3>
 
 <input type="hidden" id="indiceEdicao">
 
@@ -123,7 +124,8 @@ label {
 
 <button onclick="salvarOuEditar()">Salvar / Atualizar</button>
     <hr>
-
+    <hr>
+<button onclick="usarMinhaLocalizacao()">Usar Minha Localização Atual</button>
 
     <hr>
 
@@ -141,7 +143,40 @@ label {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
 
+function usarMinhaLocalizacao(){
 
+    if (!navigator.geolocation) {
+        alert("Geolocalização não suportada pelo navegador.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position){
+
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            lat.value = latitude.toFixed(6);
+            lng.value = longitude.toFixed(6);
+
+            map.setView([latitude, longitude], 18);
+
+            if (marcadorTemp) {
+                map.removeLayer(marcadorTemp);
+            }
+
+            marcadorTemp = L.marker([latitude, longitude]).addTo(map);
+
+            alert("Localização capturada com sucesso!");
+        },
+        function(error){
+            alert("Não foi possível obter localização. Ative o GPS.");
+        },
+        {
+            enableHighAccuracy: true
+        }
+    );
+}
 
 function exportarBackup(){
 
@@ -310,14 +345,15 @@ function carregarTudo(){
         var marker = L.marker([prop.lat, prop.lng]).addTo(map);
 
         marker.bindPopup(
-            "<b>" + prop.nome + "</b><br>" +
-            "<img src='"+prop.foto+"' width='200'><br><br>" +
-            "Proprietário: " + prop.proprietario + "<br>" +
-            "Tel: " + prop.telProprietario + "<br><br>" +
-            "Gerente: " + prop.gerente + "<br>" +
-            "Tel: " + prop.telGerente + "<br><br>" +
-            "<button onclick='tracarRota("+prop.lat+","+prop.lng+")'>Traçar Rota</button>"
-        );
+    "<b>" + prop.nome + "</b><br>" +
+    "<img src='"+prop.foto+"' width='200'><br><br>" +
+    "Proprietário: " + prop.proprietario + "<br>" +
+    "Tel: " + prop.telProprietario + "<br><br>" +
+    "Gerente: " + prop.gerente + "<br>" +
+    "Tel: " + prop.telGerente + "<br><br>" +
+    "<button onclick='editarPropriedade("+index+")'>Editar</button><br><br>" +
+    "<button onclick='tracarRota("+prop.lat+","+prop.lng+")'>Traçar Rota</button>"
+);
 
         marcadores[index] = marker; // 🔥 IMPORTANTE
     });
@@ -347,6 +383,7 @@ function atualizarLista(){
 
 // Carregar dados para edição
 function editarPropriedade(index){
+
     var prop = propriedades[index];
 
     nome.value = prop.nome;
@@ -361,9 +398,14 @@ function editarPropriedade(index){
 
     map.setView([prop.lat, prop.lng], 16);
 
-
     preview.src = prop.foto;
-preview.style.display = prop.foto ? "block" : "none";
+    preview.style.display = prop.foto ? "block" : "none";
+
+    // 🔥 NOVO: rolar para o topo do painel
+    document.getElementById("painel").scrollTop = 0;
+
+    // 🔥 NOVO: dar foco no primeiro campo
+    nome.focus();
 }
 
 // Pesquisa
