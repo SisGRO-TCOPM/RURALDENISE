@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro Rural - Denise</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body { font-family: Arial; display: flex; }
+        #map { height: 100vh; width: 70%; }
+        #painel {
+            width: 30%;
+            padding: 10px;
+            overflow-y: auto;
+            background: #f4f4f4;
+        }
+        input, button {
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 6px;
+        }
+        .item {
+            background: white;
+            padding: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+        .item:hover {
+            background: #e6f2ff;
+        }
+    </style>
+</head>
+<body>
+
+<div id="painel">
+   <h3>Cadastro</h3>
+
+<input type="hidden" id="indiceEdicao">
+
+<label>Nome da Propriedade</label>
+<input type="text" id="nome">
+
+<label>Nome do Proprietário</label>
+<input type="text" id="proprietario">
+
+<label>Telefone do Proprietário</label>
+<input type="text" id="telProprietario">
+
+<label>Nome do Gerente / Responsável</label>
+<input type="text" id="gerente">
+
+<label>Telefone do Gerente</label>
+<input type="text" id="telGerente">
+
+
+<label>Foto da Propriedade</label>
+<input type="file" id="foto" accept="image/*" onchange="previewImagem(event)">
+<br>
+<img id="preview" width="100%" style="margin-bottom:10px; display:none;">
+
+
+
+<label>Latitude</label>
+<input type="text" id="lat">
+
+<label>Longitude</label>
+<input type="text" id="lng">
+
+<button onclick="salvarOuEditar()">Salvar / Atualizar</button>
+    <hr>
+
+
+    <hr>
+
+<button onclick="exportarBackup()">Exportar Backup</button>
+<input type="file" id="importarArquivo" accept=".json" onchange="importarBackup(event)">
+
+    <h3>Pesquisar</h3>
+    <input type="text" id="pesquisa" placeholder="Digite o nome..." onkeyup="filtrarLista()">
+
+    <div id="lista"></div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+
+
+
+function exportarBackup(){
+
+    var dados = localStorage.getItem("propriedades");
+
+    if(!dados){
+        alert("Nenhum dado para exportar!");
+        return;
+    }
+
+    var blob = new Blob([dados], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "backup_propriedades_denise.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    alert("Backup exportado com sucesso!");
+}
+
+
+
+function importarBackup(event){
+
+    var arquivo = event.target.files[0];
+
+    if(!arquivo){
+        return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function(e){
+
+        try{
+            var dadosImportados = JSON.parse(e.target.result);
+
+            localStorage.setItem("propriedades", JSON.stringify(dadosImportados));
+
+            propriedades = dadosImportados;
+
+            carregarTudo();
+
+            alert("Backup importado com sucesso!");
+
+        } catch(error){
+            alert("Arquivo inválido!");
+        }
+
+    };
+
+    reader.readAsText(arquivo);
+}
+
+
+function novoCadastro(){
+    document.querySelectorAll("#painel input").forEach(input => input.value = "");
+    
+    // Limpa índice de edição
+    indiceEdicao.value = "";
+
+    // Limpa preview da imagem
+    if(preview){
+        preview.src = "";
+        preview.style.display = "none";
+    }
+}
+
+function previewImagem(event){
+    var reader = new FileReader();
+    reader.onload = function(){
+        preview.src = reader.result;
+        preview.style.display = "block";
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+
+
+
+var map = L.map('map').setView([-14.4086, -57.6585], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var propriedades = JSON.parse(localStorage.getItem("propriedades")) || [];
+var marcadores = [];
+var marcadorTemp;
+
+// Clique no mapa
+
+map.on('click', function(e) {
+
+    // Entra em modo novo cadastro
+    novoCadastro();
+
+    document.getElementById("lat").value = e.latlng.lat.toFixed(6);
+    document.getElementById("lng").value = e.latlng.lng.toFixed(6);
+
+    if (marcadorTemp) map.removeLayer(marcadorTemp);
+
+    marcadorTemp = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+});
+
+// Salvar ou editar
+function salvarOuEditar() {
+
+    var indice = document.getElementById("indiceEdicao").value;
+var imagemSalva = preview.src || "";
+
+var dados = {
+    nome: nome.value,
+    proprietario: proprietario.value,
+    telProprietario: telProprietario.value,
+    gerente: gerente.value,
+    telGerente: telGerente.value,
+    lat: lat.value,
+    lng: lng.value,
+    foto: imagemSalva
+};
+
+    if(dados.nome == "" || dados.lat == "" || dados.lng == ""){
+        alert("Preencha Nome e Coordenadas!");
+        return;
+    }
+
+    if(indice === "") {
+        propriedades.push(dados);
+    } else {
+        propriedades[indice] = dados;
+    }
+
+    localStorage.setItem("propriedades", JSON.stringify(propriedades));
+
+    limparCampos();
+    carregarTudo();
+
+    alert("Salvo com sucesso!");
+}
+
+// Carregar tudo novamente
+function carregarTudo(){
+    marcadores.forEach(m => map.removeLayer(m));
+    marcadores = [];
+    atualizarLista();
+
+    propriedades.forEach((prop, index) => {
+        var marker = L.marker([prop.lat, prop.lng]).addTo(map);
+
+       marker.bindPopup(
+    "<b>" + prop.nome + "</b><br>" +
+    "<img src='"+prop.foto+"' width='200'><br><br>" +
+    "Proprietário: " + prop.proprietario + "<br>" +
+    "Tel: " + prop.telProprietario + "<br><br>" +
+    "Gerente: " + prop.gerente + "<br>" +
+    "Tel: " + prop.telGerente + "<br><br>" +
+    "<button onclick='tracarRota("+prop.lat+","+prop.lng+")'>Traçar Rota</button>"
+);
+
+        marcadores.push(marker);
+    });
+}
+
+// Atualizar lista
+function atualizarLista(){
+    lista.innerHTML = "";
+
+    propriedades.forEach((prop, index) => {
+        var div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = "<b>"+prop.nome+"</b><br><small>"+prop.proprietario+"</small>";
+
+        div.onclick = function(){
+            editarPropriedade(index);
+        };
+
+        lista.appendChild(div);
+    });
+}
+
+// Carregar dados para edição
+function editarPropriedade(index){
+    var prop = propriedades[index];
+
+    nome.value = prop.nome;
+    proprietario.value = prop.proprietario;
+    telProprietario.value = prop.telProprietario;
+    gerente.value = prop.gerente;
+    telGerente.value = prop.telGerente;
+    lat.value = prop.lat;
+    lng.value = prop.lng;
+
+    indiceEdicao.value = index;
+
+    map.setView([prop.lat, prop.lng], 16);
+
+
+    preview.src = prop.foto;
+preview.style.display = prop.foto ? "block" : "none";
+}
+
+// Pesquisa
+function filtrarLista(){
+    var termo = pesquisa.value.toLowerCase();
+    var itens = document.querySelectorAll(".item");
+
+    itens.forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(termo) ? "block" : "none";
+    });
+}
+
+// Rota
+function tracarRota(lat, lng){
+    window.open("https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng);
+}
+
+// Limpar campos
+function limparCampos(){
+    document.querySelectorAll("input").forEach(input => input.value = "");
+}
+
+// Inicializar
+carregarTudo();
+
+</script>
+
+</body>
+</html>
