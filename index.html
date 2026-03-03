@@ -111,6 +111,30 @@ label {
     max-height: 80vh;
     overflow-y: auto;
 }
+
+
+/* Botões alternar cadastro / lista */
+.botao-bloco {
+    flex: 1;
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+/* Estado normal */
+.botao-bloco.inativo {
+    background: #ccc;
+    color: #333;
+}
+
+/* Estado ativo */
+.botao-bloco.ativo {
+    background: #1976d2;
+    color: white;
+}
 </style>
 </head>
 <body>
@@ -118,10 +142,9 @@ label {
 <div id="painel">
     <h3>NPM DENISE</h3>
    <h3>Cadastro de Propriedade Rural</h3>
-
 <div style="display:flex; gap:5px; margin-bottom:10px;">
-    <button onclick="mostrarCadastro()" style="flex:1;">Cadastro</button>
-    <button onclick="mostrarLista()" style="flex:1;">Propriedades</button>
+    <button id="btnCadastro" class="botao-bloco ativo" onclick="mostrarCadastro()">Cadastro</button>
+    <button id="btnLista" class="botao-bloco inativo" onclick="mostrarLista()">Propriedades</button>
 </div>
 <hr>
 
@@ -258,15 +281,23 @@ async function gerarPDF(){
 }
 
 function mostrarCadastro(){
-    document.getElementById("areaCadastro").style.display = "block";
+   document.getElementById("areaCadastro").style.display = "block";
     document.getElementById("areaLista").style.display = "none";
 
+    // Destacar botão ativo
+    document.getElementById("btnCadastro").classList.add("ativo");
+    document.getElementById("btnCadastro").classList.remove("inativo");
+
+    document.getElementById("btnLista").classList.remove("ativo");
+    document.getElementById("btnLista").classList.add("inativo");
+
     setTimeout(() => {
-    document.getElementById("areaCadastro").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-}, 200);
+        document.getElementById("areaCadastro").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 200);
+
 }
 
 
@@ -274,6 +305,13 @@ function mostrarCadastro(){
 function mostrarLista(){
     document.getElementById("areaCadastro").style.display = "none";
     document.getElementById("areaLista").style.display = "block";
+
+    // Destacar botão ativo
+    document.getElementById("btnLista").classList.add("ativo");
+    document.getElementById("btnLista").classList.remove("inativo");
+
+    document.getElementById("btnCadastro").classList.remove("ativo");
+    document.getElementById("btnCadastro").classList.add("inativo");
 }
 
 
