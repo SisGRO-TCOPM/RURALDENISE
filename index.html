@@ -138,24 +138,41 @@ function mostrarLista(){
     document.getElementById("btnCadastro").classList.remove("ativo");
     document.getElementById("btnCadastro").classList.add("inativo");
 }
-
 function mostrarMapa(){
     document.body.classList.remove("modo-formulario");
     document.body.classList.add("modo-mapa");
+
     document.body.style.overflow = "hidden";
-    setTimeout(()=> map.invalidateSize(), 300);
+
+    // Mostrar botão voltar apenas no modo mapa
+    document.getElementById("btnVoltar").style.display = "block";
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 300);
 }
 
 function mostrarFormulario(){
     document.body.classList.remove("modo-mapa");
     document.body.classList.add("modo-formulario");
+
     document.body.style.overflow = "auto";
+
+    document.getElementById("btnVoltar").style.display = "none";
 }
 
 function modoNormal(){
-    document.body.classList.remove("modo-mapa", "modo-formulario");
+    document.body.classList.remove("modo-mapa");
+    document.body.classList.remove("modo-formulario");
+
     document.body.style.overflow = "auto";
-    setTimeout(()=> map.invalidateSize(), 300);
+
+    // Esconde botão voltar no modo normal
+    document.getElementById("btnVoltar").style.display = "none";
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 300);
 }
 
 // ---------------- Geolocalização ----------------
