@@ -147,11 +147,11 @@ label {
     <button id="btnLista" class="botao-bloco inativo" onclick="mostrarLista()">Propriedades</button>
 </div>
 <hr>
-
-
-   <button onclick="mostrarMapa()">Ver Somente Mapa</button>
-<button onclick="mostrarFormulario()">Ver Somente Formulário</button>
-<button onclick="modoNormal()">Modo Dividido</button>
+<div style="display: flex; gap: 5px; margin-bottom: 10px;">
+    <button onclick="mostrarMapa()">Ver Somente Mapa</button>
+    <button onclick="mostrarFormulario()">Ver Somente Formulário</button>
+    <button onclick="modoNormal()">Modo Dividido</button>
+</div>
 <hr>
 <hr>
 <button onclick="usarMinhaLocalizacao()">Usar Minha Localização Atual</button>
@@ -481,7 +481,15 @@ function previewImagem(event){
 
 
 var map = L.map('map').setView([-14.4086, -57.6585], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+//L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye',
+    maxZoom: 19
+}).addTo(map);
+
+
 
 var propriedades = JSON.parse(localStorage.getItem("propriedades")) || [];
 var marcadores = [];
