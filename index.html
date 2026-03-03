@@ -1,165 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-
-    <title>Rural - Denise</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-
-body {
-    font-family: Arial;
-    margin: 0;
-}
-
-/* Layout padrão celular */
-#painel {
-    width: 100%;
-    padding: 10px;
-    background: #f4f4f4;
-}
-
-#map {
-    height: 50vh;
-    width: 100%;
-}
-
-/* Botões grandes para dedo */
-button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    margin-bottom: 8px;
-    border: none;
-    background: #1976d2;
-    color: white;
-    border-radius: 6px;
-}
-
-button:active {
-    background: #0d47a1;
-}
-
-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 8px;
-}
-
-label {
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.item {
-    background: white;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-/* Quando estiver em tela grande (computador) */
+<title>Rural - Denise</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+body { font-family: Arial; margin: 0; }
+#painel { width: 100%; padding: 10px; background: #f4f4f4; }
+#map { height: 50vh; width: 100%; }
+button { width: 100%; padding: 12px; font-size: 16px; margin-bottom: 8px; border: none; background: #1976d2; color: white; border-radius: 6px; }
+button:active { background: #0d47a1; }
+input { width: 100%; padding: 10px; font-size: 16px; margin-bottom: 8px; }
+label { font-weight: bold; font-size: 14px; }
+.item { background: white; padding: 10px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #ccc; }
 @media (min-width: 768px) {
-
-    body {
-        display: flex;
-    }
-
-    #painel {
-        width: 35%;
-        height: 100vh;
-        overflow-y: auto;
-    }
-
-    #map {
-        width: 65%;
-        height: 100vh;
-    }
+    body { display: flex; }
+    #painel { width: 35%; height: 100vh; overflow-y: auto; }
+    #map { width: 65%; height: 100vh; }
 }
-
-
-/* 🔥 Modo somente mapa */
-.modo-mapa #painel {
-    display: none;
-}
-
-.modo-mapa #map {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 1000;
-}
-
-/* 🔥 Modo somente formulário */
-.modo-formulario #map {
-    display: none;
-}
-
-.modo-formulario #painel {
-    width: 100% !important;
-    height: 100vh;
-}
-#areaLista {
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-
-/* Botões alternar cadastro / lista */
-.botao-bloco {
-    flex: 1;
-    padding: 10px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.3s;
-}
-
-/* Estado normal */
-.botao-bloco.inativo {
-    background: #ccc;
-    color: #333;
-}
-
-/* Estado ativo */
-.botao-bloco.ativo {
-    background: #1976d2;
-    color: white;
-}
+.modo-mapa #painel { display: none; }
+.modo-mapa #map { position: fixed; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 1000; }
+.modo-formulario #map { display: none; }
+.modo-formulario #painel { width: 100% !important; height: 100vh; }
+#areaLista { max-height: 80vh; overflow-y: auto; }
+.botao-bloco { flex: 1; padding: 10px; font-weight: bold; border: none; cursor: pointer; border-radius: 6px; transition: background 0.3s; }
+.botao-bloco.inativo { background: #ccc; color: #333; }
+.botao-bloco.ativo { background: #1976d2; color: white; }
 </style>
 </head>
 <body>
 
 <div id="painel">
-    <h3>NPM DENISE</h3>
-   <h3>Cadastro de Propriedade Rural</h3>
+<h3>NPM DENISE</h3>
+<h3>Cadastro de Propriedade Rural</h3>
+
 <div style="display:flex; gap:5px; margin-bottom:10px;">
-    <button id="btnCadastro" class="botao-bloco ativo" onclick="mostrarCadastro()">Cadastro</button>
-    <button id="btnLista" class="botao-bloco inativo" onclick="mostrarLista()">Propriedades</button>
+<button id="btnCadastro" class="botao-bloco ativo" onclick="mostrarCadastro()">Cadastro</button>
+<button id="btnLista" class="botao-bloco inativo" onclick="mostrarLista()">Propriedades</button>
 </div>
+
 <hr>
 <div style="display: flex; gap: 5px; margin-bottom: 10px;">
-    <button onclick="mostrarMapa()">Ver Somente Mapa</button>
-    <button onclick="mostrarFormulario()">Ver Somente Formulário</button>
-    <button onclick="modoNormal()">Modo Dividido</button>
+<button onclick="mostrarMapa()">Ver Somente Mapa</button>
+<button onclick="mostrarFormulario()">Ver Somente Formulário</button>
+<button onclick="modoNormal()">Modo Dividido</button>
 </div>
-<hr>
+
 <hr>
 <button onclick="usarMinhaLocalizacao()">Usar Minha Localização Atual</button>
 <hr>
-<hr>
 
 <div id="areaCadastro">
-
 <input type="hidden" id="indiceEdicao">
 
 <label>Nome da Propriedade</label>
@@ -177,13 +69,10 @@ label {
 <label>Telefone do Gerente</label>
 <input type="text" id="telGerente">
 
-
 <label>Foto da Propriedade</label>
 <input type="file" id="foto" accept="image/*" onchange="previewImagem(event)">
 <br>
 <img id="preview" width="100%" style="margin-bottom:10px; display:none;">
-
-
 
 <label>Latitude</label>
 <input type="text" id="lat">
@@ -192,472 +81,162 @@ label {
 <input type="text" id="lng">
 
 <button onclick="salvarOuEditar()">Salvar / Atualizar</button>
-    <hr>
-    <hr>
-
-    <button id="btnCancelar" style="display:none; background:#e53935;" onclick="cancelarEdicao()">Cancelar</button>
-
-
-    <hr>
-
+<hr>
+<button id="btnCancelar" style="display:none; background:#e53935;" onclick="cancelarEdicao()">Cancelar</button>
+<hr>
 <button onclick="exportarBackup()">Exportar Backup</button>
 <input type="file" id="importarArquivo" accept=".json" onchange="importarBackup(event)">
-
 <button onclick="gerarPDF()">Gerar Relatório em PDF</button>
-
 </div>
 
+<!-- Substitua a div da lista existente por isso -->
 <div id="areaLista" style="display:none;">
     <h3>Propriedades Cadastradas</h3>
 
-    <input type="text" id="pesquisa" placeholder="Digite o nome..." onkeyup="filtrarLista()">
+    <!-- Pesquisa -->
+    <input type="text" id="pesquisa" placeholder="Digite parte do nome..." onkeyup="filtrarListaSelect()" style="margin-bottom:10px; padding:8px; font-size:16px; width:100%;">
 
-    <div id="lista"></div>
+    <!-- Select maior -->
+    <select id="selectPropriedade" size="6" onchange="mostrarAcoesSelecionada()" style="width:100%; font-size:16px; padding:5px;"></select>
+
+    <!-- Botões aparecem apenas após selecionar -->
+    <div id="botoesAcoes" style="margin-top:10px; display:none;">
+        <button id="btnVerMapa">Ver no Mapa</button>
+        <button id="btnEditar">Editar</button>
+        <button id="btnRota">Traçar Rota</button>
+        <button id="btnExcluir" style="background:red;">Excluir</button>
+    </div>
+</div>
 </div>
 </div>
 
 <div id="map"></div>
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-    var preview = document.getElementById("preview");
-function cancelarEdicao() {
-    // Limpar campos, exceto lat/lng se desejar
-    nome.value = "";
-    proprietario.value = "";
-    telProprietario.value = "";
-    gerente.value = "";
-    telGerente.value = "";
-    preview.src = "";
-    preview.style.display = "none";
+let propriedades = JSON.parse(localStorage.getItem("propriedades")) || [];
+let marcadores = [];
+let marcadorTemp;
+let preview = document.getElementById("preview");
 
-    // Sair do modo edição
-    document.getElementById("btnCancelar").style.display = "none";
-    document.getElementById("areaCadastro").style.border = "none";
-    document.getElementById("indiceEdicao").value = "";
-    
-    // Dar foco em lat/lng ou no mapa, se quiser
-    lat.focus();
-}
-
-async function gerarPDF(){
-
-    if(propriedades.length === 0){
-        alert("Nenhuma propriedade cadastrada!");
-        return;
-    }
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    let y = 10;
-
-    doc.setFontSize(16);
-    doc.text("RELATÓRIO DE PROPRIEDADES RURAIS", 10, y);
-    y += 10;
-
-    propriedades.forEach((prop, index) => {
-
-        if(y > 270){
-            doc.addPage();
-            y = 10;
-        }
-
-        doc.setFontSize(12);
-        doc.text("Propriedade: " + prop.nome, 10, y); y+=6;
-        doc.text("Proprietário: " + prop.proprietario, 10, y); y+=6;
-        doc.text("Telefone: " + prop.telProprietario, 10, y); y+=6;
-        doc.text("Gerente: " + prop.gerente, 10, y); y+=6;
-        doc.text("Telefone Gerente: " + prop.telGerente, 10, y); y+=6;
-        doc.text("Latitude: " + prop.lat, 10, y); y+=6;
-        doc.text("Longitude: " + prop.lng, 10, y); y+=10;
-
-    });
-
-    doc.save("relatorio_propriedades_denise.pdf");
-}
-
+// ---------------- Funções de Modo de Tela ----------------
 function mostrarCadastro(){
-   document.getElementById("areaCadastro").style.display = "block";
+    document.getElementById("areaCadastro").style.display = "block";
     document.getElementById("areaLista").style.display = "none";
-
-    // Destacar botão ativo
     document.getElementById("btnCadastro").classList.add("ativo");
     document.getElementById("btnCadastro").classList.remove("inativo");
-
     document.getElementById("btnLista").classList.remove("ativo");
     document.getElementById("btnLista").classList.add("inativo");
-
-    setTimeout(() => {
-        document.getElementById("areaCadastro").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }, 200);
-
 }
-
-
 
 function mostrarLista(){
     document.getElementById("areaCadastro").style.display = "none";
     document.getElementById("areaLista").style.display = "block";
-
-    // Destacar botão ativo
     document.getElementById("btnLista").classList.add("ativo");
     document.getElementById("btnLista").classList.remove("inativo");
-
     document.getElementById("btnCadastro").classList.remove("ativo");
     document.getElementById("btnCadastro").classList.add("inativo");
 }
 
-
-function excluirPropriedade(index){
-
-    if(!confirm("Deseja realmente excluir esta propriedade?")){
-        return;
-    }
-
-    propriedades.splice(index, 1);
-
-    localStorage.setItem("propriedades", JSON.stringify(propriedades));
-
-    carregarTudo();
-
-    alert("Propriedade excluída com sucesso!");
-}
 function mostrarMapa(){
     document.body.classList.remove("modo-formulario");
     document.body.classList.add("modo-mapa");
-
     document.body.style.overflow = "hidden";
-
-    document.getElementById("btnVoltar").style.display = "block";
-
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 300);
+    setTimeout(()=> map.invalidateSize(), 300);
 }
+
 function mostrarFormulario(){
     document.body.classList.remove("modo-mapa");
     document.body.classList.add("modo-formulario");
-
     document.body.style.overflow = "auto";
-
-    document.getElementById("btnVoltar").style.display = "none";
 }
+
 function modoNormal(){
-
-    document.body.classList.remove("modo-mapa");
-    document.body.classList.remove("modo-formulario");
-
+    document.body.classList.remove("modo-mapa", "modo-formulario");
     document.body.style.overflow = "auto";
-
-    document.getElementById("btnVoltar").style.display = "none";
-
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 300);
+    setTimeout(()=> map.invalidateSize(), 300);
 }
 
+// ---------------- Geolocalização ----------------
 function usarMinhaLocalizacao(){
-
-    if (!navigator.geolocation) {
-        alert("Geolocalização não suportada pelo navegador.");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function(position){
-
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-
-            lat.value = latitude.toFixed(6);
-            lng.value = longitude.toFixed(6);
-
-            map.setView([latitude, longitude], 18);
-
-            if (marcadorTemp) {
-                map.removeLayer(marcadorTemp);
-            }
-
-            marcadorTemp = L.marker([latitude, longitude]).addTo(map);
-
-            alert("Localização capturada com sucesso!");
-        },
-        function(error){
-            alert("Não foi possível obter localização. Ative o GPS.");
-        },
-        {
-            enableHighAccuracy: true
-        }
-    );
+    if(!navigator.geolocation){ alert("Geolocalização não suportada!"); return; }
+    navigator.geolocation.getCurrentPosition(pos=>{
+        const latV = pos.coords.latitude.toFixed(6);
+        const lngV = pos.coords.longitude.toFixed(6);
+        document.getElementById("lat").value = latV;
+        document.getElementById("lng").value = lngV;
+        map.setView([latV, lngV], 18);
+        if(marcadorTemp) map.removeLayer(marcadorTemp);
+        marcadorTemp = L.marker([latV, lngV]).addTo(map);
+        alert("Localização capturada!");
+    }, ()=> alert("Não foi possível obter localização. Ative o GPS."), { enableHighAccuracy: true });
 }
 
-function exportarBackup(){
-
-    var dados = localStorage.getItem("propriedades");
-
-    if(!dados){
-        alert("Nenhum dado para exportar!");
-        return;
-    }
-
-    var blob = new Blob([dados], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "backup_propriedades_denise.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-    alert("Backup exportado com sucesso!");
-}
-
-
-
-function importarBackup(event){
-
-    var arquivo = event.target.files[0];
-
-    if(!arquivo){
-        return;
-    }
-
-    var reader = new FileReader();
-
-    reader.onload = function(e){
-
-        try{
-            var dadosImportados = JSON.parse(e.target.result);
-
-            localStorage.setItem("propriedades", JSON.stringify(dadosImportados));
-
-            propriedades = dadosImportados;
-
-            carregarTudo();
-
-            alert("Backup importado com sucesso!");
-
-        } catch(error){
-            alert("Arquivo inválido!");
-        }
-
-    };
-
-    reader.readAsText(arquivo);
-}
-
-
-function novoCadastro(){
-    document.querySelectorAll("#painel input").forEach(input => input.value = "");
-    
-    // Limpa índice de edição
-    indiceEdicao.value = "";
-
-    // Limpa preview da imagem
-    if(preview){
-        preview.src = "";
-        preview.style.display = "none";
-    }
-}
-
+// ---------------- Redimensionar imagem ----------------
 function previewImagem(event){
-    var reader = new FileReader();
-    reader.onload = function(){
-        preview.src = reader.result;
-        preview.style.display = "block";
-    }
-    reader.readAsDataURL(event.target.files[0]);
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+        const img = new Image();
+        img.onload = function(){
+            const canvas = document.createElement("canvas");
+            const maxWidth = 300;
+            const scale = Math.min(maxWidth/img.width, 1);
+            canvas.width = img.width*scale;
+            canvas.height = img.height*scale;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            preview.src = canvas.toDataURL("image/jpeg", 0.7);
+            preview.style.display = "block";
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
-
-
-
-var map = L.map('map').setView([-14.4086, -57.6585], 13);
-//L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye',
-    maxZoom: 19
-}).addTo(map);
-
-
-
-var propriedades = JSON.parse(localStorage.getItem("propriedades")) || [];
-var marcadores = [];
-var marcadorTemp;
-
-// Clique no mapa
-
-map.on('click', function(e) {
-
-    // Entra em modo novo cadastro
-    novoCadastro();
-
-    document.getElementById("lat").value = e.latlng.lat.toFixed(6);
-    document.getElementById("lng").value = e.latlng.lng.toFixed(6);
-
-    if (marcadorTemp) map.removeLayer(marcadorTemp);
-
-    marcadorTemp = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-});
-
-// Salvar ou editar
-function salvarOuEditar() {
-
-    var indice = document.getElementById("indiceEdicao").value;
-    var imagemSalva = preview.src || "";
-
-    var dados = {
-        nome: nome.value,
-        proprietario: proprietario.value,
-        telProprietario: telProprietario.value,
-        gerente: gerente.value,
-        telGerente: telGerente.value,
-        lat: lat.value,
-        lng: lng.value,
-        foto: imagemSalva
+// ---------------- Salvar / Editar ----------------
+function salvarOuEditar(){
+    const indice = document.getElementById("indiceEdicao").value;
+    const dados = {
+        nome: nome.value.trim(),
+        proprietario: proprietario.value.trim(),
+        telProprietario: telProprietario.value.trim(),
+        gerente: gerente.value.trim(),
+        telGerente: telGerente.value.trim(),
+        lat: parseFloat(lat.value),
+        lng: parseFloat(lng.value),
+        foto: preview.src || ""
     };
 
-    if(dados.nome == "" || dados.lat == "" || dados.lng == ""){
-        alert("Preencha Nome e Coordenadas!");
+    if(!dados.nome || isNaN(dados.lat) || isNaN(dados.lng)){
+        alert("Preencha Nome e coordenadas válidas!");
         return;
     }
 
-    if(indice === "") {
-        propriedades.push(dados);
-    } else {
-        propriedades[indice] = dados;
+    if(indice === "" && propriedades.some(p => p.nome.toLowerCase() === dados.nome.toLowerCase())){
+        alert("Propriedade já cadastrada!");
+        return;
     }
+
+    if(indice === "") propriedades.push(dados);
+    else propriedades[indice] = dados;
 
     localStorage.setItem("propriedades", JSON.stringify(propriedades));
-
     limparCampos();
     carregarTudo();
-
-    alert("Salvo com sucesso!");
-
-
     document.getElementById("btnCancelar").style.display = "none";
-document.getElementById("areaCadastro").style.border = "none";
-document.getElementById("indiceEdicao").value = "";
+    alert("Salvo com sucesso!");
 }
 
-function focarNoMapa(index){
-    var prop = propriedades[index];
-    var marker = marcadores[index];
-
-    map.setView([prop.lat, prop.lng], 17);
-    marker.openPopup();
+function cancelarEdicao(){
+    limparCampos();
+    document.getElementById("btnCancelar").style.display = "none";
 }
 
-// Carregar tudo novamente
-function carregarTudo(){
-    marcadores.forEach(m => map.removeLayer(m));
-    marcadores = [];
-    atualizarLista();
-
-    propriedades.forEach((prop, index) => {
-        var marker = L.marker([prop.lat, prop.lng]).addTo(map);
-
-        marker.bindPopup(
-    "<b>" + prop.nome + "</b><br>" +
-    "<img src='"+prop.foto+"' width='200'><br><br>" +
-    "Proprietário: " + prop.proprietario + "<br>" +
-    "Tel: " + prop.telProprietario + "<br><br>" +
-    "Gerente: " + prop.gerente + "<br>" +
-    "Tel: " + prop.telGerente + "<br><br>" +
-    "<button onclick='editarPropriedade("+index+")'>Editar</button><br><br>" + "<button onclick='excluirPropriedade("+index+")' style='background:red;'>Excluir</button><br><br>" +
-    "<button onclick='tracarRota("+prop.lat+","+prop.lng+")'>Traçar Rota</button>"
-);
-
-        marcadores[index] = marker; // 🔥 IMPORTANTE
-    });
-}
-
-// Atualizar lista
-function atualizarLista(){
-    lista.innerHTML = "";
-
-    propriedades.forEach((prop, index) => {
-
-        var div = document.createElement("div");
-        div.className = "item";
-
-        div.innerHTML = `
-            <b>${prop.nome}</b><br>
-            <small>${prop.proprietario}</small><br><br>
-
-            <button onclick="focarNoMapa(${index})">Ver no Mapa</button>
-<button onclick="editarPropriedade(${index})">Editar</button>
-            <button onclick="tracarRota(${prop.lat}, ${prop.lng})">Rota</button>
-            <button onclick="excluirPropriedade(${index})" style="background:red;">Excluir</button>
-        `;
-
-        lista.appendChild(div);
-    });
-}
-
-// Carregar dados para edição
-function editarPropriedade(indice){
-
-    const prop = propriedades[indice]; // 🔹 declarar prop antes de usar
-
-    mostrarCadastro();
-
-    document.getElementById("areaCadastro").style.border = "2px solid green";
-    document.getElementById("btnCancelar").style.display = "block";
-
-    document.getElementById("nome").value = prop.nome;
-    document.getElementById("proprietario").value = prop.proprietario;
-    document.getElementById("telProprietario").value = prop.telProprietario;
-    document.getElementById("gerente").value = prop.gerente;
-    document.getElementById("telGerente").value = prop.telGerente;
-    document.getElementById("lat").value = prop.lat;
-    document.getElementById("lng").value = prop.lng;
-    document.getElementById("indiceEdicao").value = indice;
-
-    // Carregar a foto
-    preview.src = prop.foto || "";
-    preview.style.display = prop.foto ? "block" : "none";
-
-    // Dar foco no primeiro campo
-    document.getElementById("nome").focus();
-
-    // Rolar o formulário para o topo
-    setTimeout(() => {
-        document.getElementById("areaCadastro").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }, 200);
-}
-// Pesquisa
-function filtrarLista(){
-    var termo = pesquisa.value.toLowerCase();
-    var itens = document.querySelectorAll(".item");
-
-    itens.forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(termo) ? "block" : "none";
-    });
-}
-
-// Rota
-function tracarRota(lat, lng){
-    window.open("https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng);
-}
-
-// Limpar campos
+// ---------------- Limpar Campos ----------------
 function limparCampos(){
-
     nome.value = "";
     proprietario.value = "";
     telProprietario.value = "";
@@ -666,32 +245,225 @@ function limparCampos(){
     lat.value = "";
     lng.value = "";
     indiceEdicao.value = "";
-
-    if(preview){
-        preview.src = "";
-        preview.style.display = "none";
-    }
+    preview.src = "";
+    preview.style.display = "none";
 }
 
-// Inicializar
-carregarTudo();
+// ---------------- Carregar e listar ----------------
+function carregarTudo(){
+    marcadores.forEach(m => map.removeLayer(m));
+    marcadores = [];
+    atualizarLista();
+    propriedades.forEach((prop, i)=>{
+        const marker = L.marker([prop.lat, prop.lng]).addTo(map);
+        marker.bindPopup(`<b>${prop.nome}</b><br>
+            <img src='${prop.foto}' width='150'><br>
+            Proprietário: ${prop.proprietario}<br>
+            Tel: ${prop.telProprietario}<br>
+            Gerente: ${prop.gerente}<br>
+            Tel: ${prop.telGerente}<br><br>
+            <button onclick='editarPropriedade(${i})'>Editar</button>
+            <button onclick='excluirPropriedade(${i})' style='background:red;'>Excluir</button>
+            <button onclick='tracarRota(${prop.lat},${prop.lng})'>Traçar Rota</button>`);
+        marcadores[i] = marker;
+    });
+}
+// Atualizar a lista de propriedades no select
+// Atualizar lista de propriedades no select
+function atualizarLista(){
+    const select = document.getElementById("selectPropriedade");
+    select.innerHTML = ''; // Limpa tudo antes
 
+    propriedades.forEach((prop, i)=>{
+        const option = document.createElement("option");
+        option.value = i; // índice da propriedade
+        option.textContent = prop.nome;
+        select.appendChild(option);
+    });
+
+    document.getElementById("botoesAcoes").style.display = "none";
+}
+
+// Mostrar botões quando selecionar
+function mostrarAcoesSelecionada(){
+    const select = document.getElementById("selectPropriedade");
+    const index = select.value;
+    const botoes = document.getElementById("botoesAcoes");
+
+    if(index === ""){
+        botoes.style.display = "none";
+        return;
+    }
+
+    botoes.style.display = "block";
+
+    document.getElementById("btnVerMapa").onclick = ()=> focarNoMapa(index);
+    document.getElementById("btnEditar").onclick = ()=> editarPropriedade(index);
+    document.getElementById("btnRota").onclick = ()=> tracarRota(propriedades[index].lat, propriedades[index].lng);
+    document.getElementById("btnExcluir").onclick = ()=> {
+        excluirPropriedade(index);
+        atualizarLista();
+        document.getElementById("botoesAcoes").style.display = "none";
+        select.value = "";
+    };
+}
+
+// Filtrar select pela pesquisa
+function filtrarListaSelect(){
+    const termo = document.getElementById("pesquisa").value.toLowerCase();
+    const select = document.getElementById("selectPropriedade");
+
+    // Limpa select antes de adicionar novamente
+    select.innerHTML = '';
+
+    propriedades.forEach((prop, i)=>{
+        if(prop.nome.toLowerCase().includes(termo)){
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = prop.nome;
+            select.appendChild(option);
+        }
+    });
+
+    document.getElementById("botoesAcoes").style.display = "none";
+}
+
+// Mostrar botões quando selecionar uma propriedade
+function mostrarAcoesSelecionada(){
+    const select = document.getElementById("selectPropriedade");
+    const index = select.value;
+    const botoes = document.getElementById("botoesAcoes");
+
+    if(index === ""){
+        botoes.style.display = "none";
+        return;
+    }
+
+    botoes.style.display = "block";
+
+    // Atualiza as ações dos botões
+    document.getElementById("btnVerMapa").onclick = ()=> focarNoMapa(index);
+    document.getElementById("btnEditar").onclick = ()=> editarPropriedade(index);
+    document.getElementById("btnRota").onclick = ()=> tracarRota(propriedades[index].lat, propriedades[index].lng);
+    document.getElementById("btnExcluir").onclick = ()=> {
+        excluirPropriedade(index);
+        atualizarLista(); // Atualiza select após exclusão
+        document.getElementById("botoesAcoes").style.display = "none";
+        select.value = "";
+    };
+}
+
+// ---------------- Ações ----------------
+function focarNoMapa(i){
+    const p = propriedades[i];
+    map.setView([p.lat,p.lng],17);
+    marcadores[i].openPopup();
+}
+
+function editarPropriedade(i){
+    const p = propriedades[i];
+    mostrarCadastro();
+    document.getElementById("areaCadastro").style.border = "2px solid green";
+    document.getElementById("btnCancelar").style.display = "block";
+    nome.value = p.nome; proprietario.value = p.proprietario; telProprietario.value = p.telProprietario;
+    gerente.value = p.gerente; telGerente.value = p.telGerente;
+    lat.value = p.lat; lng.value = p.lng; indiceEdicao.value = i;
+    preview.src = p.foto; preview.style.display = p.foto ? "block" : "none";
+}
+
+function excluirPropriedade(i){
+    if(!confirm("Deseja realmente excluir esta propriedade?")) return;
+    propriedades.splice(i,1);
+    localStorage.setItem("propriedades", JSON.stringify(propriedades));
+    carregarTudo();
+    alert("Propriedade excluída!");
+}
+
+function filtrarLista(){
+    const termo = pesquisa.value.toLowerCase();
+    document.querySelectorAll(".item").forEach(item=>{
+        item.style.display = item.innerText.toLowerCase().includes(termo)?"block":"none";
+    });
+}
+
+function tracarRota(lat,lng){
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+}
+
+// ---------------- Backup ----------------
+function exportarBackup(){
+    if(!propriedades.length){ alert("Nenhum dado para exportar!"); return; }
+    const blob = new Blob([JSON.stringify(propriedades)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "backup_propriedades_denise.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    alert("Backup exportado!");
+}
+
+function importarBackup(event){
+    const arquivo = event.target.files[0];
+    if(!arquivo) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+        try{
+            const dados = JSON.parse(e.target.result);
+            propriedades = dados;
+            localStorage.setItem("propriedades", JSON.stringify(propriedades));
+            carregarTudo();
+            alert("Backup importado!");
+        }catch{
+            alert("Arquivo inválido!");
+        }
+    };
+    reader.readAsText(arquivo);
+}
+
+// ---------------- PDF ----------------
+async function gerarPDF(){
+    if(!propriedades.length){ alert("Nenhuma propriedade cadastrada!"); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let y = 10;
+    doc.setFontSize(16);
+    doc.text("RELATÓRIO DE PROPRIEDADES RURAIS",10,y); y+=10;
+    for(const prop of propriedades){
+        if(y>270){ doc.addPage(); y=10; }
+        doc.setFontSize(12);
+        doc.text("Propriedade: "+prop.nome,10,y); y+=6;
+        doc.text("Proprietário: "+prop.proprietario,10,y); y+=6;
+        doc.text("Tel: "+prop.telProprietario,10,y); y+=6;
+        doc.text("Gerente: "+prop.gerente,10,y); y+=6;
+        doc.text("Tel Gerente: "+prop.telGerente,10,y); y+=6;
+        doc.text("Latitude: "+prop.lat,10,y); y+=6;
+        doc.text("Longitude: "+prop.lng,10,y); y+=6;
+        if(prop.foto){ doc.addImage(prop.foto,'JPEG',10,y,50,50); y+=55; }
+        y+=5;
+    }
+    doc.save("relatorio_propriedades_denise.pdf");
+}
+
+// ---------------- Inicializar ----------------
+const map = L.map('map').setView([-14.4086, -57.6585],13);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+    attribution:'Tiles © Esri', maxZoom:19
+}).addTo(map);
+
+map.on('click', e=>{
+    novoCadastro();
+    lat.value = e.latlng.lat.toFixed(6);
+    lng.value = e.latlng.lng.toFixed(6);
+    if(marcadorTemp) map.removeLayer(marcadorTemp);
+    marcadorTemp = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+});
+
+function novoCadastro(){ limparCampos(); }
+
+carregarTudo();
 </script>
-<button id="btnVoltar" onclick="modoNormal()" style="
-position: fixed;
-bottom: 20px;
-right: 20px;
-z-index: 9999;
-padding: 16px;
-background: #1976d2;
-color: white;
-border: none;
-border-radius: 50%;
-font-size: 18px;
-box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-display: none;
-">
-⬅
-</button>
+
+<button id="btnVoltar" onclick="modoNormal()" style="position: fixed; bottom:20px; right:20px; z-index:9999; padding:16px; background:#1976d2; color:white; border:none; border-radius:50%; font-size:18px; box-shadow:0 6px 15px rgba(0,0,0,0.3); display:none;">⬅</button>
+
 </body>
 </html>
