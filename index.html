@@ -83,6 +83,34 @@ label {
     }
 }
 
+
+/* 🔥 Modo somente mapa */
+.modo-mapa #painel {
+    display: none;
+}
+
+.modo-mapa #map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1000;
+}
+
+/* 🔥 Modo somente formulário */
+.modo-formulario #map {
+    display: none;
+}
+
+.modo-formulario #painel {
+    width: 100% !important;
+    height: 100vh;
+}
+#areaLista {
+    max-height: 80vh;
+    overflow-y: auto;
+}
 </style>
 </head>
 <body>
@@ -91,11 +119,23 @@ label {
     <h3>NPM DENISE</h3>
    <h3>Cadastro de Propriedade Rural</h3>
 
+<div style="display:flex; gap:5px; margin-bottom:10px;">
+    <button onclick="mostrarCadastro()" style="flex:1;">Cadastro</button>
+    <button onclick="mostrarLista()" style="flex:1;">Propriedades</button>
+</div>
+<hr>
+
 
    <button onclick="mostrarMapa()">Ver Somente Mapa</button>
 <button onclick="mostrarFormulario()">Ver Somente Formulário</button>
 <button onclick="modoNormal()">Modo Dividido</button>
 <hr>
+<hr>
+<button onclick="usarMinhaLocalizacao()">Usar Minha Localização Atual</button>
+<hr>
+<hr>
+
+<div id="areaCadastro">
 
 <input type="hidden" id="indiceEdicao">
 
@@ -131,58 +171,159 @@ label {
 <button onclick="salvarOuEditar()">Salvar / Atualizar</button>
     <hr>
     <hr>
-<button onclick="usarMinhaLocalizacao()">Usar Minha Localização Atual</button>
+
+    <button id="btnCancelar" style="display:none; background:#e53935;" onclick="cancelarEdicao()">Cancelar</button>
+
 
     <hr>
 
 <button onclick="exportarBackup()">Exportar Backup</button>
 <input type="file" id="importarArquivo" accept=".json" onchange="importarBackup(event)">
 
-    <h3>Pesquisar</h3>
+<button onclick="gerarPDF()">Gerar Relatório em PDF</button>
+
+</div>
+
+<div id="areaLista" style="display:none;">
+    <h3>Propriedades Cadastradas</h3>
+
     <input type="text" id="pesquisa" placeholder="Digite o nome..." onkeyup="filtrarLista()">
 
     <div id="lista"></div>
 </div>
+</div>
 
 <div id="map"></div>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+    var preview = document.getElementById("preview");
+function cancelarEdicao() {
+    // Limpar campos, exceto lat/lng se desejar
+    nome.value = "";
+    proprietario.value = "";
+    telProprietario.value = "";
+    gerente.value = "";
+    telGerente.value = "";
+    preview.src = "";
+    preview.style.display = "none";
 
+    // Sair do modo edição
+    document.getElementById("btnCancelar").style.display = "none";
+    document.getElementById("areaCadastro").style.border = "none";
+    document.getElementById("indiceEdicao").value = "";
+    
+    // Dar foco em lat/lng ou no mapa, se quiser
+    lat.focus();
+}
+
+async function gerarPDF(){
+
+    if(propriedades.length === 0){
+        alert("Nenhuma propriedade cadastrada!");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    let y = 10;
+
+    doc.setFontSize(16);
+    doc.text("RELATÓRIO DE PROPRIEDADES RURAIS", 10, y);
+    y += 10;
+
+    propriedades.forEach((prop, index) => {
+
+        if(y > 270){
+            doc.addPage();
+            y = 10;
+        }
+
+        doc.setFontSize(12);
+        doc.text("Propriedade: " + prop.nome, 10, y); y+=6;
+        doc.text("Proprietário: " + prop.proprietario, 10, y); y+=6;
+        doc.text("Telefone: " + prop.telProprietario, 10, y); y+=6;
+        doc.text("Gerente: " + prop.gerente, 10, y); y+=6;
+        doc.text("Telefone Gerente: " + prop.telGerente, 10, y); y+=6;
+        doc.text("Latitude: " + prop.lat, 10, y); y+=6;
+        doc.text("Longitude: " + prop.lng, 10, y); y+=10;
+
+    });
+
+    doc.save("relatorio_propriedades_denise.pdf");
+}
+
+function mostrarCadastro(){
+    document.getElementById("areaCadastro").style.display = "block";
+    document.getElementById("areaLista").style.display = "none";
+
+    setTimeout(() => {
+    document.getElementById("areaCadastro").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}, 200);
+}
+
+
+
+function mostrarLista(){
+    document.getElementById("areaCadastro").style.display = "none";
+    document.getElementById("areaLista").style.display = "block";
+}
+
+
+function excluirPropriedade(index){
+
+    if(!confirm("Deseja realmente excluir esta propriedade?")){
+        return;
+    }
+
+    propriedades.splice(index, 1);
+
+    localStorage.setItem("propriedades", JSON.stringify(propriedades));
+
+    carregarTudo();
+
+    alert("Propriedade excluída com sucesso!");
+}
 function mostrarMapa(){
+    document.body.classList.remove("modo-formulario");
+    document.body.classList.add("modo-mapa");
 
-    document.getElementById("painel").style.display = "none";
-    document.getElementById("map").style.width = "100%";
-    document.getElementById("map").style.height = "100vh";
+    document.body.style.overflow = "hidden";
 
     document.getElementById("btnVoltar").style.display = "block";
 
     setTimeout(() => {
         map.invalidateSize();
-    }, 200);
+    }, 300);
 }
-
 function mostrarFormulario(){
-    document.getElementById("map").style.display = "none";
-    document.getElementById("painel").style.width = "100%";
-    document.getElementById("painel").style.height = "100vh";
+    document.body.classList.remove("modo-mapa");
+    document.body.classList.add("modo-formulario");
+
+    document.body.style.overflow = "auto";
+
+    document.getElementById("btnVoltar").style.display = "none";
 }
 function modoNormal(){
 
-    document.getElementById("painel").style.display = "block";
-    document.getElementById("map").style.display = "block";
+    document.body.classList.remove("modo-mapa");
+    document.body.classList.remove("modo-formulario");
 
-    document.getElementById("painel").style.width = "";
-    document.getElementById("map").style.width = "";
-    document.getElementById("map").style.height = "";
+    document.body.style.overflow = "auto";
 
     document.getElementById("btnVoltar").style.display = "none";
 
     setTimeout(() => {
         map.invalidateSize();
-    }, 200);
+    }, 300);
 }
-
 
 function usarMinhaLocalizacao(){
 
@@ -327,18 +468,18 @@ map.on('click', function(e) {
 function salvarOuEditar() {
 
     var indice = document.getElementById("indiceEdicao").value;
-var imagemSalva = preview.src || "";
+    var imagemSalva = preview.src || "";
 
-var dados = {
-    nome: nome.value,
-    proprietario: proprietario.value,
-    telProprietario: telProprietario.value,
-    gerente: gerente.value,
-    telGerente: telGerente.value,
-    lat: lat.value,
-    lng: lng.value,
-    foto: imagemSalva
-};
+    var dados = {
+        nome: nome.value,
+        proprietario: proprietario.value,
+        telProprietario: telProprietario.value,
+        gerente: gerente.value,
+        telGerente: telGerente.value,
+        lat: lat.value,
+        lng: lng.value,
+        foto: imagemSalva
+    };
 
     if(dados.nome == "" || dados.lat == "" || dados.lng == ""){
         alert("Preencha Nome e Coordenadas!");
@@ -356,16 +497,12 @@ var dados = {
     limparCampos();
     carregarTudo();
 
-
-    indiceEdicao.value = "";
-    localStorage.setItem("propriedades", JSON.stringify(propriedades));
-
-indiceEdicao.value = "";
-
-limparCampos();
-carregarTudo();
-
     alert("Salvo com sucesso!");
+
+
+    document.getElementById("btnCancelar").style.display = "none";
+document.getElementById("areaCadastro").style.border = "none";
+document.getElementById("indiceEdicao").value = "";
 }
 
 function focarNoMapa(index){
@@ -392,7 +529,7 @@ function carregarTudo(){
     "Tel: " + prop.telProprietario + "<br><br>" +
     "Gerente: " + prop.gerente + "<br>" +
     "Tel: " + prop.telGerente + "<br><br>" +
-    "<button onclick='editarPropriedade("+index+")'>Editar</button><br><br>" +
+    "<button onclick='editarPropriedade("+index+")'>Editar</button><br><br>" + "<button onclick='excluirPropriedade("+index+")' style='background:red;'>Excluir</button><br><br>" +
     "<button onclick='tracarRota("+prop.lat+","+prop.lng+")'>Traçar Rota</button>"
 );
 
@@ -416,6 +553,7 @@ function atualizarLista(){
             <button onclick="focarNoMapa(${index})">Ver no Mapa</button>
 <button onclick="editarPropriedade(${index})">Editar</button>
             <button onclick="tracarRota(${prop.lat}, ${prop.lng})">Rota</button>
+            <button onclick="excluirPropriedade(${index})" style="background:red;">Excluir</button>
         `;
 
         lista.appendChild(div);
@@ -423,32 +561,39 @@ function atualizarLista(){
 }
 
 // Carregar dados para edição
-function editarPropriedade(index){
+function editarPropriedade(indice){
 
-    var prop = propriedades[index];
+    const prop = propriedades[indice]; // 🔹 declarar prop antes de usar
 
-    nome.value = prop.nome;
-    proprietario.value = prop.proprietario;
-    telProprietario.value = prop.telProprietario;
-    gerente.value = prop.gerente;
-    telGerente.value = prop.telGerente;
-    lat.value = prop.lat;
-    lng.value = prop.lng;
+    mostrarCadastro();
 
-    indiceEdicao.value = index;
+    document.getElementById("areaCadastro").style.border = "2px solid green";
+    document.getElementById("btnCancelar").style.display = "block";
 
-    map.setView([prop.lat, prop.lng], 16);
+    document.getElementById("nome").value = prop.nome;
+    document.getElementById("proprietario").value = prop.proprietario;
+    document.getElementById("telProprietario").value = prop.telProprietario;
+    document.getElementById("gerente").value = prop.gerente;
+    document.getElementById("telGerente").value = prop.telGerente;
+    document.getElementById("lat").value = prop.lat;
+    document.getElementById("lng").value = prop.lng;
+    document.getElementById("indiceEdicao").value = indice;
 
-    preview.src = prop.foto;
+    // Carregar a foto
+    preview.src = prop.foto || "";
     preview.style.display = prop.foto ? "block" : "none";
 
-    // 🔥 NOVO: rolar para o topo do painel
-    document.getElementById("painel").scrollTop = 0;
+    // Dar foco no primeiro campo
+    document.getElementById("nome").focus();
 
-    // 🔥 NOVO: dar foco no primeiro campo
-    nome.focus();
+    // Rolar o formulário para o topo
+    setTimeout(() => {
+        document.getElementById("areaCadastro").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 200);
 }
-
 // Pesquisa
 function filtrarLista(){
     var termo = pesquisa.value.toLowerCase();
@@ -488,17 +633,19 @@ carregarTudo();
 </script>
 <button id="btnVoltar" onclick="modoNormal()" style="
 position: fixed;
-top: 10px;
-right: 10px;
+bottom: 20px;
+right: 20px;
 z-index: 9999;
-display: none;
-padding: 10px 15px;
+padding: 16px;
 background: #1976d2;
 color: white;
 border: none;
-border-radius: 8px;
+border-radius: 50%;
+font-size: 18px;
+box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+display: none;
 ">
-Voltar
+⬅
 </button>
 </body>
 </html>
