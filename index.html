@@ -379,7 +379,10 @@ function focarNoMapa(i){
 
 function editarPropriedade(i){
     const p = propriedades[i];
+    modoNormal();
     mostrarCadastro();
+    
+    //aqui
     document.getElementById("areaCadastro").style.border = "2px solid green";
     document.getElementById("btnCancelar").style.display = "block";
     nome.value = p.nome; proprietario.value = p.proprietario; telProprietario.value = p.telProprietario;
