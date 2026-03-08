@@ -264,6 +264,9 @@ function limparCampos(){
     indiceEdicao.value = "";
     preview.src = "";
     preview.style.display = "none";
+document.getElementById("areaCadastro").style.border = "none";
+
+
 }
 
 // ---------------- Carregar e listar ----------------
@@ -273,15 +276,18 @@ function carregarTudo(){
     atualizarLista();
     propriedades.forEach((prop, i)=>{
         const marker = L.marker([prop.lat, prop.lng]).addTo(map);
-        marker.bindPopup(`<b>${prop.nome}</b><br>
-            <img src='${prop.foto}' width='150'><br>
-            Proprietário: ${prop.proprietario}<br>
-            Tel: ${prop.telProprietario}<br>
-            Gerente: ${prop.gerente}<br>
-            Tel: ${prop.telGerente}<br><br>
-            <button onclick='editarPropriedade(${i})'>Editar</button>
-            <button onclick='excluirPropriedade(${i})' style='background:red;'>Excluir</button>
-            <button onclick='tracarRota(${prop.lat},${prop.lng})'>Traçar Rota</button>`);
+      marker.bindPopup(`<b>${prop.nome}</b><br>
+<img src='${prop.foto}' width='150'><br>
+Proprietário: ${prop.proprietario}<br>
+Tel: ${prop.telProprietario}<br>
+Gerente: ${prop.gerente}<br>
+Tel: ${prop.telGerente}<br><br>
+
+<button onclick='abrirWhatsApp("${prop.telProprietario}")'>WhatsApp Proprietário</button>
+
+<button onclick='editarPropriedade(${i})'>Editar</button>
+<button onclick='excluirPropriedade(${i})' style='background:red;'>Excluir</button>
+<button onclick='tracarRota(${prop.lat},${prop.lng})'>Traçar Rota</button>`);
         marcadores[i] = marker;
     });
 }
@@ -302,28 +308,6 @@ function atualizarLista(){
 }
 
 // Mostrar botões quando selecionar
-function mostrarAcoesSelecionada(){
-    const select = document.getElementById("selectPropriedade");
-    const index = select.value;
-    const botoes = document.getElementById("botoesAcoes");
-
-    if(index === ""){
-        botoes.style.display = "none";
-        return;
-    }
-
-    botoes.style.display = "block";
-
-    document.getElementById("btnVerMapa").onclick = ()=> focarNoMapa(index);
-    document.getElementById("btnEditar").onclick = ()=> editarPropriedade(index);
-    document.getElementById("btnRota").onclick = ()=> tracarRota(propriedades[index].lat, propriedades[index].lng);
-    document.getElementById("btnExcluir").onclick = ()=> {
-        excluirPropriedade(index);
-        atualizarLista();
-        document.getElementById("botoesAcoes").style.display = "none";
-        select.value = "";
-    };
-}
 
 // Filtrar select pela pesquisa
 function filtrarListaSelect(){
@@ -399,12 +383,7 @@ function excluirPropriedade(i){
     alert("Propriedade excluída!");
 }
 
-function filtrarLista(){
-    const termo = pesquisa.value.toLowerCase();
-    document.querySelectorAll(".item").forEach(item=>{
-        item.style.display = item.innerText.toLowerCase().includes(termo)?"block":"none";
-    });
-}
+
 
 function tracarRota(lat,lng){
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
@@ -439,6 +418,18 @@ function importarBackup(event){
     };
     reader.readAsText(arquivo);
 }
+
+function abrirWhatsApp(numero){
+    if(!numero){
+        alert("Telefone não cadastrado!");
+        return;
+    }
+
+    const num = numero.replace(/\D/g,''); // remove caracteres
+    window.open(`https://wa.me/55${num}`, '_blank');
+}
+
+
 
 // ---------------- PDF ----------------
 async function gerarPDF(){
@@ -481,6 +472,10 @@ map.on('click', e=>{
 function novoCadastro(){ limparCampos(); }
 
 carregarTudo();
+
+setTimeout(() => {
+    map.invalidateSize();
+}, 300);
 </script>
 
 <button id="btnVoltar" onclick="modoNormal()" style="position: fixed; bottom:20px; right:20px; z-index:9999; padding:16px; background:#1976d2; color:white; border:none; border-radius:50%; font-size:18px; box-shadow:0 6px 15px rgba(0,0,0,0.3); display:none;">⬅</button>
