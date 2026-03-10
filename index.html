@@ -34,6 +34,8 @@ label { font-weight: bold; font-size: 14px; }
 <div id="painel">
 <h3>NPM DENISE</h3>
 <h3>Cadastro de Propriedade Rural</h3>
+<h3 id="totalProps"></h3>
+
 
 <div style="display:flex; gap:5px; margin-bottom:10px;">
 <button id="btnCadastro" class="botao-bloco ativo" onclick="mostrarCadastro()">Cadastro</button>
@@ -115,6 +117,10 @@ label { font-weight: bold; font-size: 14px; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
+
+document.getElementById("totalProps").innerText =
+"Total de propriedades: " + propriedades.length;
+
 let propriedades = JSON.parse(localStorage.getItem("propriedades")) || [];
 let marcadores = [];
 let marcadorTemp;
@@ -145,7 +151,9 @@ function mostrarMapa(){
     document.body.style.overflow = "hidden";
 
     // Mostrar botão voltar apenas no modo mapa
-    document.getElementById("btnVoltar").style.display = "block";
+    //document.getElementById("btnVoltar").style.display = "block";
+    const btn = document.getElementById("btnVoltar");
+if(btn) btn.style.display = "block";
 
     setTimeout(() => {
         map.invalidateSize();
@@ -245,6 +253,7 @@ function salvarOuEditar(){
     carregarTudo();
     document.getElementById("btnCancelar").style.display = "none";
     alert("Salvo com sucesso!");
+    map.setView([p.lat,p.lng],17);
 }
 
 function cancelarEdicao(){
@@ -283,13 +292,15 @@ Tel: ${prop.telProprietario}<br>
 Gerente: ${prop.gerente}<br>
 Tel: ${prop.telGerente}<br><br>
 
-<button onclick='abrirWhatsApp("${prop.telProprietario}")'>WhatsApp Proprietário</button>
+
+<button onclick="abrirWhatsApp('${prop.telProprietario}')">WhatsApp Proprietário</button>
 
 <button onclick='editarPropriedade(${i})'>Editar</button>
 <button onclick='excluirPropriedade(${i})' style='background:red;'>Excluir</button>
 <button onclick='tracarRota(${prop.lat},${prop.lng})'>Traçar Rota</button>`);
         marcadores[i] = marker;
     });
+    propriedades.sort((a,b)=> a.nome.localeCompare(b.nome));
 }
 // Atualizar a lista de propriedades no select
 // Atualizar lista de propriedades no select
@@ -386,7 +397,8 @@ function excluirPropriedade(i){
 
 
 function tracarRota(lat,lng){
-    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+  //  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`);
 }
 
 // ---------------- Backup ----------------
@@ -476,6 +488,20 @@ carregarTudo();
 setTimeout(() => {
     map.invalidateSize();
 }, 300);
+
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+  .then(function(reg) {
+    console.log('Service Worker registrado', reg);
+  }).catch(function(err) {
+    console.log('Erro ao registrar SW:', err);
+  });
+}
+
+
+
+
 </script>
 
 <button id="btnVoltar" onclick="modoNormal()" style="position: fixed; bottom:20px; right:20px; z-index:9999; padding:16px; background:#1976d2; color:white; border:none; border-radius:50%; font-size:18px; box-shadow:0 6px 15px rgba(0,0,0,0.3); display:none;">⬅</button>
